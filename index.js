@@ -129,3 +129,21 @@ app.post('/saveFavs', verify, (req, res) => {
     }
   })
 })
+
+app.get('/getMyFavs', verify, (req, res) => {
+  jwt.verify(req.token, constants.secretKey, async (err) => {
+    if (err) {
+      res.sendStatus(403)
+    }
+    else {
+      const userName = jwt.decode(req.token).user
+      let data = await User.find({ user: userName })
+      userId = data[0]['_id']
+      let storage = await UserStorage.find({ userId: userId })
+      res.send({
+        favs: storage[0].favs,
+        favsIds: storage[0].favsIds
+      })
+    }
+  })
+})
