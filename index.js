@@ -17,7 +17,7 @@ server.listen(PORT, () => console.log(`Listen on *: ${PORT}`));
 
 mongoose.set('useUnifiedTopology', true);
 
-mongoose.connect('mongodb+srv://Cyril:inglorion9312@simplechat-krolc.mongodb.net/anime?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://Cyril:<pw>@simplechat-krolc.mongodb.net/anime?retryWrites=true&w=majority',
   { useNewUrlParser: true, keepAlive: true, keepAliveInitialDelay: 300000 })
   .catch(error => console.log(error));
 
@@ -38,7 +38,6 @@ app.post('/createUser', async (req, res) => {
   if (existing.length === 0) {
     let user = new User({ user: req.body.user, pw: req.body.pw })
     user.save()
-    console.log(req.body.user)
     jwt.sign(req.body, constants.secretKey, (err, token) => {
       if (err) {
         res.sendStatus(500)
@@ -119,7 +118,6 @@ app.post('/saveFavs', verify, (req, res) => {
         res.send(storage)
       }
       else {
-        console.log(storage[0])
         storage = storage[0]
         storage.favs = req.body.favs
         storage.favsIds = req.body.favsIds
