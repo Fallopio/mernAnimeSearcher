@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let UserStorage = new Schema({
-    user: String,
+    userId: String,
     favs: Array,
     favsIds: Array
 })
