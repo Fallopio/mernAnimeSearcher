@@ -3,8 +3,7 @@ const Schema = mongoose.Schema;
 
 let UserStorage = new Schema({
     userId: String,
-    favs: Array,
-    favsIds: Array
+    favs: Array,    
 })
 
 module.exports = mongoose.model('UserStorage', UserStorage)

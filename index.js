@@ -11,44 +11,48 @@ app.use(cors())
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Listen on *: ${PORT}`));
 
 mongoose.set('useUnifiedTopology', true);
 
-mongoose.connect('mongodb+srv://Cyril:<pw>@simplechat-krolc.mongodb.net/anime?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://Cyril:inglorion9312@simplechat-krolc.mongodb.net/anime?retryWrites=true&w=majority',
   { useNewUrlParser: true, keepAlive: true, keepAliveInitialDelay: 300000 })
   .catch(error => console.log(error));
 
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+app.use(express.static(path.join(__dirname, 'client', 'build')));
+
+app.get('/SimpleAnimeSearch*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
 });
 
-const constants = require('./constants')
-const verify = require('./config/auth')
+const constants = require('./constants');
+const verify = require('./config/auth');
 let User = require('./models/userModel');
-let Comment = require('./models/commentsModel')
-let UserStorage = require('./models/userStorageModel')
+let Comment = require('./models/commentsModel');
+let UserStorage = require('./models/userStorageModel');
 
 
 
 app.post('/createUser', async (req, res) => {
   let existing = await User.find({ user: req.body.user })
   if (existing.length === 0) {
-    let user = new User({ user: req.body.user, pw: req.body.pw })
-    user.save()
+    let user = new User({ user: req.body.user, pw: req.body.pw });
+    user.save();
     jwt.sign(req.body, constants.secretKey, (err, token) => {
       if (err) {
         res.sendStatus(500)
       }
       else {
-        res.send(token)
+        res.send({ token: token })
       }
     })
   }
   else {
-    res.send('user exists')
+    res.status(400).send({
+      message: 'user exists'
+    })
   }
 })
 
@@ -59,12 +63,12 @@ app.get('/loginByToken', verify, (req, res) => {
     }
     else {
       const userName = jwt.decode(req.token).user
-      res.send(userName)
+      res.send({ userName: userName })
     }
   })
 })
 
-app.get('/loginByCred', async (req, res) => {
+app.post('/loginByCred', async (req, res) => {
   let found = await User.find({ user: req.body.user, pw: req.body.pw })
   if (found.length === 1) {
     jwt.sign(req.body, constants.secretKey, (err, token) => {
@@ -72,30 +76,35 @@ app.get('/loginByCred', async (req, res) => {
         res.sendStatus(500)
       }
       else {
-        res.send(token)
+        res.send({ token: token })
       }
     })
   }
   else {
-    res.sendStatus(500)
+    res.status(400).send({
+      message: 'wrong password or username'
+    })
   }
 })
 
 app.post('/comment', verify, (req, res) => {
   jwt.verify(req.token, constants.secretKey, (err) => {
     if (err) {
-      res.sendStatus(403)
+      res.status(403).send({
+        message: 'not logged in'
+      })
     }
     else {
+      console.log(req.body.id)
       let comment = new Comment({ id: req.body.id, comment: req.body.comment, from: req.body.from })
-      comment.save().then(res.send('posted'))
+      comment.save().then(res.sendStatus(200))
 
     }
   })
 })
 
 app.get('/getComments/:titleId', (req, res) => {
-  Comment.find({ id: req.params.titleId }).then(data => res.send(data))
+  Comment.find({ id: req.params.titleId }).then(data => res.send({ comments: data }))
 })
 
 app.post('/saveFavs', verify, (req, res) => {
@@ -112,17 +121,15 @@ app.post('/saveFavs', verify, (req, res) => {
         storage = new UserStorage({
           userId: userId,
           favs: req.body.favs,
-          favsIds: req.body.favs
         })
         storage.save()
-        res.send(storage)
+        res.sendStatus(200)
       }
       else {
         storage = storage[0]
         storage.favs = req.body.favs
-        storage.favsIds = req.body.favsIds
         storage.save()
-        res.send(storage)
+        res.sendStatus(200)
       }
     }
   })
@@ -140,7 +147,6 @@ app.get('/getMyFavs', verify, (req, res) => {
       let storage = await UserStorage.find({ userId: userId })
       res.send({
         favs: storage[0].favs,
-        favsIds: storage[0].favsIds
       })
     }
   })
