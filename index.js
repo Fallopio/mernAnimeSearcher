@@ -21,7 +21,7 @@ mongoose.connect('mongodb+srv://Cyril:inglorion9312@simplechat-krolc.mongodb.net
   { useNewUrlParser: true, keepAlive: true, keepAliveInitialDelay: 300000 })
   .catch(error => console.log(error));
 
-app.use(express.static(path.join(__dirname, 'client', 'build')));
+app.use(express.static(path.join(__dirname, 'build')));
 
 app.get('/SimpleAnimeSearch*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
