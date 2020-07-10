@@ -17,7 +17,7 @@ server.listen(PORT, () => console.log(`Listen on *: ${PORT}`));
 
 mongoose.set('useUnifiedTopology', true);
 
-mongoose.connect('mongodb+srv://Cyril:<pw>@simplechat-krolc.mongodb.net/anime?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://Cyril:inglorion9312@simplechat-krolc.mongodb.net/anime?retryWrites=true&w=majority',
   { useNewUrlParser: true, keepAlive: true, keepAliveInitialDelay: 300000 })
   .catch(error => console.log(error));
 
@@ -54,7 +54,7 @@ app.post('/createUser', async (req, res) => {
       message: 'user exists'
     })
   }
-})
+});
 
 app.get('/loginByToken', verify, (req, res) => {
   jwt.verify(req.token, constants.secretKey, (err) => {
@@ -66,7 +66,7 @@ app.get('/loginByToken', verify, (req, res) => {
       res.send({ userName: userName })
     }
   })
-})
+});
 
 app.post('/loginByCred', async (req, res) => {
   let found = await User.find({ user: req.body.user, pw: req.body.pw })
@@ -85,7 +85,7 @@ app.post('/loginByCred', async (req, res) => {
       message: 'wrong password or username'
     })
   }
-})
+});
 
 app.post('/comment', verify, (req, res) => {
   jwt.verify(req.token, constants.secretKey, (err) => {
@@ -101,11 +101,11 @@ app.post('/comment', verify, (req, res) => {
 
     }
   })
-})
+});
 
 app.get('/getComments/:titleId', (req, res) => {
   Comment.find({ id: req.params.titleId }).then(data => res.send({ comments: data }))
-})
+});
 
 app.post('/saveFavs', verify, (req, res) => {
   jwt.verify(req.token, constants.secretKey, async (err) => {
@@ -133,7 +133,7 @@ app.post('/saveFavs', verify, (req, res) => {
       }
     }
   })
-})
+});
 
 app.get('/getMyFavs', verify, (req, res) => {
   jwt.verify(req.token, constants.secretKey, async (err) => {
@@ -150,4 +150,4 @@ app.get('/getMyFavs', verify, (req, res) => {
       })
     }
   })
-})
+});
