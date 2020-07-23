@@ -6,4 +6,4 @@ This app uses kitsu api as an anime database and my own api that links comments 
 
 Link to client repository https://github.com/Cyrillbb/SimpleAnimeSearch.
 
-Link to live app https://simple-anime-searcher.herokuapp.com/SimpleAnimeSearch.
+Link to live app https://simple-anime-searcher.herokuapp.com.
