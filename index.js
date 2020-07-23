@@ -23,7 +23,7 @@ mongoose.connect('mongodb+srv://Cyril:inglorion9312@simplechat-krolc.mongodb.net
 
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/SimpleAnimeSearch*', function (req, res) {
+app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
