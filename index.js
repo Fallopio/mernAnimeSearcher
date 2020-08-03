@@ -96,7 +96,7 @@ app.post('/comment', verify, (req, res) => {
     }
     else {
       console.log(req.body.id)
-      let comment = new Comment({ id: req.body.id, comment: req.body.comment, from: req.body.from })
+      let comment = new Comment({ id: req.body.id, comment: req.body.comment, from: req.body.from, date: new Date() })
       comment.save().then(res.sendStatus(200))
 
     }
